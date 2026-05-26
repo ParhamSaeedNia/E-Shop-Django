@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Sign Up — DigitalShop{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+    <div class="auth-card">
+        <h1>Create account</h1>
+        <p class="auth-subtitle">Join DigitalShop and start shopping</p>
+
+        <form method="post" class="auth-form">
+            {% csrf_token %}
+            {% if form.non_field_errors %}
+                <div class="alert alert-error">{{ form.non_field_errors }}</div>
+            {% endif %}
+            {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}<span class="field-error">{{ field.errors.0 }}</span>{% endif %}
+                {% if field.help_text %}<span class="field-help">{{ field.help_text }}</span>{% endif %}
+            </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary btn-block btn-lg">Create Account</button>
+        </form>
+
+        <p class="auth-footer">Already have an account? <a href="{% url 'accounts:login' %}">Sign in</a></p>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const params = new URLSearchParams(window.location.search);
+    const ref = params.get('ref');
+    if (ref) {
+        const field = document.getElementById('id_referral_code');
+        if (field) field.value = ref;
+    }
+</script>
+{% endblock %}

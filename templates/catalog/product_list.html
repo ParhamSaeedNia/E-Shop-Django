@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}Shop — DigitalShop{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1>{% if current_category %}{{ current_category.name }}{% else %}All Products{% endif %}</h1>
+        {% if current_category %}<p>{{ current_category.description }}</p>{% endif %}
+    </div>
+</div>
+
+<div class="container shop-layout">
+    <aside class="shop-sidebar">
+        <div class="sidebar-card">
+            <h3>Categories</h3>
+            <ul class="category-list">
+                <li><a href="{% url 'catalog:products' %}" {% if not current_category %}class="active"{% endif %}>All Products</a></li>
+                {% for cat in categories %}
+                <li><a href="{% url 'catalog:category' cat.slug %}" {% if current_category and current_category.slug == cat.slug %}class="active"{% endif %}>{{ cat.icon|default:"" }} {{ cat.name }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </aside>
+
+    <div class="shop-main">
+        <div class="shop-toolbar">
+            <form method="get" class="search-form">
+                <input type="text" name="q" value="{{ search_query }}" placeholder="Search products...">
+                <button type="submit" class="btn btn-primary btn-sm">Search</button>
+            </form>
+            <form method="get" class="sort-form">
+                {% if search_query %}<input type="hidden" name="q" value="{{ search_query }}">{% endif %}
+                <select name="sort" onchange="this.form.submit()">
+                    <option value="newest" {% if current_sort == "newest" %}selected{% endif %}>Newest</option>
+                    <option value="price_low" {% if current_sort == "price_low" %}selected{% endif %}>Price: Low to High</option>
+                    <option value="price_high" {% if current_sort == "price_high" %}selected{% endif %}>Price: High to Low</option>
+                    <option value="title" {% if current_sort == "title" %}selected{% endif %}>Name A-Z</option>
+                </select>
+            </form>
+        </div>
+
+        {% if products %}
+        <div class="product-grid">
+            {% for product in products %}
+                {% include "components/product_card.html" %}
+            {% endfor %}
+        </div>
+
+        {% if page_obj.has_other_pages %}
+        <div class="pagination">
+            {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}&sort={{ current_sort }}" class="btn btn-ghost btn-sm">← Previous</a>
+            {% endif %}
+            <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}&sort={{ current_sort }}" class="btn btn-ghost btn-sm">Next →</a>
+            {% endif %}
+        </div>
+        {% endif %}
+        {% else %}
+        <div class="empty-state">
+            <p>No products found.</p>
+            <a href="{% url 'catalog:products' %}" class="btn btn-primary">Browse All Products</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

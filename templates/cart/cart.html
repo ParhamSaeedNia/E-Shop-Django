@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Shopping Cart — DigitalShop{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1>Shopping Cart</h1>
+    </div>
+</div>
+
+<div class="container cart-layout">
+    {% if items %}
+    <div class="cart-items">
+        {% for item in items %}
+        <div class="cart-item">
+            <div class="cart-item-info">
+                <a href="{{ item.product.get_absolute_url }}">
+                    <h3>{{ item.product.title }}</h3>
+                </a>
+                <span class="product-category">{{ item.product.category.name }}</span>
+                <span class="cart-item-price">${{ item.product.price }} each</span>
+            </div>
+            <div class="cart-item-actions">
+                <form method="post" action="{% url 'cart:update' item.id %}" class="qty-form">
+                    {% csrf_token %}
+                    <button type="submit" name="action" value="decrement" class="btn btn-ghost btn-sm">−</button>
+                    <span class="qty">{{ item.quantity }}</span>
+                    <button type="submit" name="action" value="increment" class="btn btn-ghost btn-sm">+</button>
+                </form>
+                <span class="line-total">${{ item.line_total }}</span>
+                <form method="post" action="{% url 'cart:update' item.id %}">
+                    {% csrf_token %}
+                    <button type="submit" name="action" value="remove" class="btn btn-ghost btn-sm text-danger">Remove</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <aside class="cart-summary">
+        <div class="summary-card">
+            <h3>Order Summary</h3>
+            <div class="summary-row">
+                <span>Subtotal</span>
+                <span>${{ subtotal }}</span>
+            </div>
+            {% if coupon_discount %}
+            <div class="summary-row discount">
+                <span>Coupon ({{ coupon_code }})</span>
+                <span>−${{ coupon_discount }}</span>
+            </div>
+            {% endif %}
+            <div class="summary-row total">
+                <span>Total</span>
+                <span>${{ cart_total }}</span>
+            </div>
+
+            <form method="post" action="{% url 'cart:apply_coupon' %}" class="coupon-form">
+                {% csrf_token %}
+                <input type="text" name="coupon_code" placeholder="Coupon code" value="{{ coupon_code }}">
+                <button type="submit" class="btn btn-ghost btn-sm">Apply</button>
+            </form>
+            {% if coupon_code %}
+            <form method="post" action="{% url 'cart:remove_coupon' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-ghost btn-sm text-danger">Remove coupon</button>
+            </form>
+            {% endif %}
+
+            {% if user.is_authenticated %}
+                <a href="{% url 'cart:checkout' %}" class="btn btn-primary btn-block btn-lg">Proceed to Checkout</a>
+            {% else %}
+                <a href="{% url 'accounts:login' %}?next={% url 'cart:checkout' %}" class="btn btn-primary btn-block btn-lg">Login to Checkout</a>
+            {% endif %}
+        </div>
+    </aside>
+    {% else %}
+    <div class="empty-state">
+        <h2>Your cart is empty</h2>
+        <p>Add some digital products to get started.</p>
+        <a href="{% url 'catalog:products' %}" class="btn btn-primary btn-lg">Browse Products</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

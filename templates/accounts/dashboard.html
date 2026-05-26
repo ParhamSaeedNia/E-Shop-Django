@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard — DigitalShop{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1>Welcome, {{ user.first_name|default:user.username }}</h1>
+        <p>Manage your account, orders, and digital library.</p>
+    </div>
+</div>
+
+<div class="container dashboard-layout">
+    <aside class="dashboard-sidebar">
+        <nav class="dashboard-nav">
+            <a href="{% url 'accounts:dashboard' %}" class="active">Overview</a>
+            <a href="{% url 'orders:list' %}">Orders</a>
+            <a href="{% url 'accounts:library' %}">My Library</a>
+            <a href="{% url 'accounts:referrals' %}">Referrals</a>
+            <a href="{% url 'accounts:profile' %}">Profile Settings</a>
+        </nav>
+    </aside>
+
+    <div class="dashboard-main">
+        <div class="stats-grid">
+            <div class="stat-card dashboard-stat">
+                <span class="stat-value">{{ recent_orders|length }}</span>
+                <span class="stat-label">Recent Orders</span>
+            </div>
+            <div class="stat-card dashboard-stat">
+                <span class="stat-value">{{ library_count }}</span>
+                <span class="stat-label">Library Items</span>
+            </div>
+            <div class="stat-card dashboard-stat">
+                <span class="stat-value">${{ referral_credit }}</span>
+                <span class="stat-label">Referral Credit</span>
+            </div>
+            <div class="stat-card dashboard-stat">
+                <span class="stat-value">{{ referral_count }}</span>
+                <span class="stat-label">Referrals</span>
+            </div>
+        </div>
+
+        <div class="dashboard-section">
+            <div class="section-header">
+                <h2>Recent Orders</h2>
+                <a href="{% url 'orders:list' %}" class="link-arrow">View all →</a>
+            </div>
+            {% if recent_orders %}
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Order</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Total</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in recent_orders %}
+                        <tr>
+                            <td>{{ order.order_number }}</td>
+                            <td>{{ order.created_at|date:"M d, Y" }}</td>
+                            <td><span class="status-badge status-{{ order.status }}">{{ order.get_status_display }}</span></td>
+                            <td>${{ order.total }}</td>
+                            <td><a href="{% url 'orders:detail' order.order_number %}">View</a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-state small">
+                <p>No orders yet.</p>
+                <a href="{% url 'catalog:products' %}" class="btn btn-primary btn-sm">Start Shopping</a>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="dashboard-section">
+            <h2>Your Referral Code</h2>
+            <div class="referral-box">
+                <code class="referral-code">{{ referral_code }}</code>
+                <a href="{% url 'accounts:referrals' %}" class="btn btn-ghost btn-sm">Share & Earn</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

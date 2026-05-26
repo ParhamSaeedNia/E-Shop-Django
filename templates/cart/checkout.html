@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Checkout — DigitalShop{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1>Checkout</h1>
+    </div>
+</div>
+
+<div class="container checkout-layout">
+    <div class="checkout-items">
+        <h2>Your Order</h2>
+        {% for item in items %}
+        <div class="checkout-item">
+            <div>
+                <strong>{{ item.product.title }}</strong>
+                <span class="text-muted">x{{ item.quantity }}</span>
+            </div>
+            <span>${{ item.line_total }}</span>
+        </div>
+        {% endfor %}
+    </div>
+
+    <aside class="checkout-summary">
+        <form method="post" class="summary-card">
+            {% csrf_token %}
+            <h3>Payment Summary</h3>
+
+            <div class="summary-row">
+                <span>Subtotal</span>
+                <span>${{ subtotal }}</span>
+            </div>
+            {% if coupon_discount %}
+            <div class="summary-row discount">
+                <span>Coupon discount</span>
+                <span>−${{ coupon_discount }}</span>
+            </div>
+            {% endif %}
+
+            <div class="form-group">
+                <label for="id_coupon_code">Coupon Code</label>
+                {{ form.coupon_code }}
+            </div>
+
+            {% if referral_credit > 0 %}
+            <div class="form-group checkbox-group">
+                <label>
+                    {{ form.use_referral_credit }}
+                    Use referral credit (${{ max_credit_usable }} available)
+                </label>
+            </div>
+            {% endif %}
+
+            <div class="summary-row total">
+                <span>Total</span>
+                <span>${{ total }}</span>
+            </div>
+
+            <p class="checkout-note">This is a demo checkout. Payment is simulated — your order will be completed instantly.</p>
+
+            <button type="submit" class="btn btn-primary btn-block btn-lg">Complete Purchase</button>
+        </form>
+    </aside>
+</div>
+{% endblock %}

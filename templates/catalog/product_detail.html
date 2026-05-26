@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.title }} — DigitalShop{% endblock %}
+
+{% block content %}
+<div class="container product-detail">
+    <nav class="breadcrumb">
+        <a href="{% url 'storefront:home' %}">Home</a> /
+        <a href="{% url 'catalog:category' product.category.slug %}">{{ product.category.name }}</a> /
+        <span>{{ product.title }}</span>
+    </nav>
+
+    <div class="product-detail-grid">
+        <div class="product-detail-image">
+            {% if product.cover_image %}
+                <img src="{{ product.cover_image.url }}" alt="{{ product.title }}">
+            {% else %}
+                <div class="product-placeholder large">
+                    <span>{{ product.category.icon|default:"📦" }}</span>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="product-detail-info">
+            <span class="product-category">{{ product.category.name }}</span>
+            <h1>{{ product.title }}</h1>
+            <p class="product-short-desc">{{ product.short_description }}</p>
+
+            <div class="product-price large">
+                <span class="price-current">${{ product.price }}</span>
+                {% if product.is_on_sale %}
+                    <span class="price-original">${{ product.compare_at_price }}</span>
+                    <span class="badge badge-sale">Save {{ product.discount_percent }}%</span>
+                {% endif %}
+            </div>
+
+            <form method="post" action="{% url 'cart:add' product.id %}" class="product-actions">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary btn-lg">Add to Cart — ${{ product.price }}</button>
+            </form>
+
+            <div class="product-meta">
+                <div class="meta-item">
+                    <strong>Delivery</strong>
+                    <span>Instant download</span>
+                </div>
+                <div class="meta-item">
+                    <strong>Format</strong>
+                    <span>Digital files</span>
+                </div>
+                {% if product.assets.count %}
+                <div class="meta-item">
+                    <strong>Files included</strong>
+                    <span>{{ product.assets.count }} file{{ product.assets.count|pluralize }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="product-description">
+        <h2>Description</h2>
+        <div class="prose">{{ product.description|linebreaks }}</div>
+    </div>
+
+    {% if product.assets.exists %}
+    <div class="product-files">
+        <h2>What's Included</h2>
+        <ul class="file-list">
+            {% for asset in product.assets.all %}
+            <li>
+                <span class="file-icon">📄</span>
+                <span>{{ asset.title }}</span>
+                <span class="file-type">.{{ asset.file_type }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    {% if related_products %}
+    <section class="section">
+        <h2>Related Products</h2>
+        <div class="product-grid">
+            {% for product in related_products %}
+                {% include "components/product_card.html" %}
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+</div>
+{% endblock %}

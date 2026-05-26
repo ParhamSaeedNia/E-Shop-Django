@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Order {{ order.order_number }} — DigitalShop{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1>Order {{ order.order_number }}</h1>
+        <p>Placed on {{ order.created_at|date:"F d, Y \a\t H:i" }}</p>
+    </div>
+</div>
+
+<div class="container order-detail">
+    <div class="order-status-banner status-{{ order.status }}">
+        Status: <strong>{{ order.get_status_display }}</strong>
+        {% if order.status == "completed" %}
+            — Your digital products are ready in <a href="{% url 'accounts:library' %}">My Library</a>
+        {% endif %}
+    </div>
+
+    <div class="order-items-card">
+        <h2>Items</h2>
+        {% for item in order.items.all %}
+        <div class="order-item-row">
+            <div>
+                <strong>{{ item.product_title }}</strong>
+                <span class="text-muted">x{{ item.quantity }} @ ${{ item.unit_price }}</span>
+            </div>
+            <span>${{ item.line_total }}</span>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="summary-card order-summary">
+        <div class="summary-row"><span>Subtotal</span><span>${{ order.subtotal }}</span></div>
+        {% if order.discount_amount %}<div class="summary-row discount"><span>Coupon discount</span><span>−${{ order.discount_amount }}</span></div>{% endif %}
+        {% if order.referral_credit_used %}<div class="summary-row discount"><span>Referral credit</span><span>−${{ order.referral_credit_used }}</span></div>{% endif %}
+        {% if order.coupon_code %}<div class="summary-row"><span>Coupon</span><span>{{ order.coupon_code }}</span></div>{% endif %}
+        <div class="summary-row total"><span>Total</span><span>${{ order.total }}</span></div>
+    </div>
+
+    <div class="order-actions">
+        <a href="{% url 'orders:list' %}" class="btn btn-ghost">← Back to Orders</a>
+        {% if order.status == "completed" %}
+            <a href="{% url 'accounts:library' %}" class="btn btn-primary">Go to Library</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

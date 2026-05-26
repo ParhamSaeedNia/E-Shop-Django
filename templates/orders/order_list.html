@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Orders — DigitalShop{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1>Order History</h1>
+    </div>
+</div>
+
+<div class="container dashboard-layout">
+    <aside class="dashboard-sidebar">
+        <nav class="dashboard-nav">
+            <a href="{% url 'accounts:dashboard' %}">Overview</a>
+            <a href="{% url 'orders:list' %}" class="active">Orders</a>
+            <a href="{% url 'accounts:library' %}">My Library</a>
+            <a href="{% url 'accounts:referrals' %}">Referrals</a>
+            <a href="{% url 'accounts:profile' %}">Profile Settings</a>
+        </nav>
+    </aside>
+
+    <div class="dashboard-main">
+        {% if orders %}
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Order #</th>
+                        <th>Date</th>
+                        <th>Items</th>
+                        <th>Status</th>
+                        <th>Total</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td>{{ order.order_number }}</td>
+                        <td>{{ order.created_at|date:"M d, Y H:i" }}</td>
+                        <td>{{ order.items.count }} item{{ order.items.count|pluralize }}</td>
+                        <td><span class="status-badge status-{{ order.status }}">{{ order.get_status_display }}</span></td>
+                        <td>${{ order.total }}</td>
+                        <td><a href="{% url 'orders:detail' order.order_number %}">Details</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <h2>No orders yet</h2>
+            <a href="{% url 'catalog:products' %}" class="btn btn-primary btn-lg">Start Shopping</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

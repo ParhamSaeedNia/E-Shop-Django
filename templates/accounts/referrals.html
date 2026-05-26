@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Referrals — DigitalShop{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1>Referral Program</h1>
+        <p>Earn 5% credit when friends make a purchase using your link.</p>
+    </div>
+</div>
+
+<div class="container dashboard-layout">
+    <aside class="dashboard-sidebar">
+        <nav class="dashboard-nav">
+            <a href="{% url 'accounts:dashboard' %}">Overview</a>
+            <a href="{% url 'orders:list' %}">Orders</a>
+            <a href="{% url 'accounts:library' %}">My Library</a>
+            <a href="{% url 'accounts:referrals' %}" class="active">Referrals</a>
+            <a href="{% url 'accounts:profile' %}">Profile Settings</a>
+        </nav>
+    </aside>
+
+    <div class="dashboard-main">
+        <div class="stats-grid">
+            <div class="stat-card dashboard-stat">
+                <span class="stat-value">${{ referral_credit }}</span>
+                <span class="stat-label">Available Credit</span>
+            </div>
+            <div class="stat-card dashboard-stat">
+                <span class="stat-value">{{ referrals|length }}</span>
+                <span class="stat-label">Total Referrals</span>
+            </div>
+        </div>
+
+        <div class="dashboard-section">
+            <h2>Your Referral Link</h2>
+            <div class="referral-box">
+                <input type="text" readonly value="{{ referral_link }}" id="referral-link" class="referral-input">
+                <button type="button" class="btn btn-primary btn-sm" onclick="navigator.clipboard.writeText(document.getElementById('referral-link').value); this.textContent='Copied!'">Copy Link</button>
+            </div>
+            <p class="text-muted">Your code: <strong>{{ referral_code }}</strong></p>
+        </div>
+
+        <div class="dashboard-section">
+            <h2>Referral History</h2>
+            {% if referrals %}
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Order</th>
+                            <th>Reward</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ref in referrals %}
+                        <tr>
+                            <td>{{ ref.referred_user.username }}</td>
+                            <td>{{ ref.order.order_number }}</td>
+                            <td>${{ ref.amount }}</td>
+                            <td><span class="status-badge status-{{ ref.status }}">{{ ref.get_status_display }}</span></td>
+                            <td>{{ ref.created_at|date:"M d, Y" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-state small">
+                <p>No referrals yet. Share your link to start earning!</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Categories — DigitalShop{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1>Categories</h1>
+        <p>Browse our collection of digital products by category.</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="category-grid">
+        {% for category in categories %}
+        <a href="{% url 'catalog:category' category.slug %}" class="category-card">
+            <span class="category-icon">{{ category.icon|default:"📁" }}</span>
+            <h3>{{ category.name }}</h3>
+            <p>{{ category.description|truncatewords:15 }}</p>
+        </a>
+        {% empty %}
+        <div class="empty-state">
+            <p>No categories available yet.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,92 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}DigitalShop{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container navbar-inner">
+            <a href="{% url 'storefront:home' %}" class="logo">
+                <span class="logo-icon">◈</span>
+                DigitalShop
+            </a>
+            <div class="nav-links">
+                <a href="{% url 'catalog:products' %}">Shop</a>
+                <a href="{% url 'catalog:categories' %}">Categories</a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'accounts:library' %}">My Library</a>
+                    <a href="{% url 'accounts:dashboard' %}">Dashboard</a>
+                    {% if user.is_staff %}
+                        <a href="{% url 'accounting:dashboard' %}" class="nav-admin">Accounting</a>
+                        <a href="/admin/" class="nav-admin">Admin</a>
+                    {% endif %}
+                {% endif %}
+            </div>
+            <div class="nav-actions">
+                <a href="{% url 'cart:detail' %}" class="cart-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                    {% if cart_item_count %}<span class="cart-badge">{{ cart_item_count }}</span>{% endif %}
+                </a>
+                {% if user.is_authenticated %}
+                    <div class="user-menu">
+                        <span class="user-name">{{ user.username }}</span>
+                        <a href="{% url 'accounts:logout' %}" class="btn btn-ghost btn-sm">Logout</a>
+                    </div>
+                {% else %}
+                    <a href="{% url 'accounts:login' %}" class="btn btn-ghost btn-sm">Login</a>
+                    <a href="{% url 'accounts:register' %}" class="btn btn-primary btn-sm">Sign Up</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    {% if messages %}
+    <div class="container messages-container">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-inner">
+            <div class="footer-brand">
+                <span class="logo-icon">◈</span>
+                <strong>DigitalShop</strong>
+                <p>Premium digital products, instant delivery.</p>
+            </div>
+            <div class="footer-links">
+                <div>
+                    <h4>Shop</h4>
+                    <a href="{% url 'catalog:products' %}">All Products</a>
+                    <a href="{% url 'catalog:categories' %}">Categories</a>
+                </div>
+                <div>
+                    <h4>Account</h4>
+                    <a href="{% url 'accounts:dashboard' %}">Dashboard</a>
+                    <a href="{% url 'accounts:library' %}">My Library</a>
+                    <a href="{% url 'accounts:referrals' %}">Referrals</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom container">
+            <p>&copy; 2026 DigitalShop. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="{% static 'js/main.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

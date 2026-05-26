@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}My Library — DigitalShop{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1>My Library</h1>
+        <p>Your purchased digital products — download anytime.</p>
+    </div>
+</div>
+
+<div class="container dashboard-layout">
+    <aside class="dashboard-sidebar">
+        <nav class="dashboard-nav">
+            <a href="{% url 'accounts:dashboard' %}">Overview</a>
+            <a href="{% url 'orders:list' %}">Orders</a>
+            <a href="{% url 'accounts:library' %}" class="active">My Library</a>
+            <a href="{% url 'accounts:referrals' %}">Referrals</a>
+            <a href="{% url 'accounts:profile' %}">Profile Settings</a>
+        </nav>
+    </aside>
+
+    <div class="dashboard-main">
+        {% if library_items %}
+        <div class="library-grid">
+            {% for item in library_items %}
+            <div class="library-card">
+                <div class="library-card-header">
+                    {% if item.product.cover_image %}
+                        <img src="{{ item.product.cover_image.url }}" alt="{{ item.product.title }}">
+                    {% else %}
+                        <div class="product-placeholder"><span>📦</span></div>
+                    {% endif %}
+                    <div>
+                        <h3>{{ item.product.title }}</h3>
+                        <span class="text-muted">Purchased {{ item.created_at|date:"M d, Y" }}</span>
+                    </div>
+                </div>
+                <div class="library-downloads">
+                    {% for asset in item.product.assets.all %}
+                    <a href="{% url 'orders:download' asset.id %}" class="btn btn-primary btn-sm">
+                        ↓ {{ asset.title }} (.{{ asset.file_type }})
+                    </a>
+                    {% empty %}
+                    <span class="text-muted">No files available</span>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <h2>Your library is empty</h2>
+            <p>Purchase digital products to access them here.</p>
+            <a href="{% url 'catalog:products' %}" class="btn btn-primary btn-lg">Browse Products</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
