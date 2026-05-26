@@ -24,11 +24,13 @@ A scalable Django e-commerce platform for **digital products** — e-books, cour
 ## Features
 
 ### Storefront
+
 - Product catalog with **categories**, search, and sorting
 - Product detail pages with pricing, sale badges, and file listings
 - Responsive dark UI with a cohesive design system
 
 ### Shopping & Checkout
+
 - Session-based cart for guests; persistent cart for logged-in users
 - Cart merge on login/register
 - **Coupon codes** (percentage or fixed discount)
@@ -36,16 +38,19 @@ A scalable Django e-commerce platform for **digital products** — e-books, cour
 - Simulated payment flow with instant order completion
 
 ### Customer Panel
+
 - Dashboard with order history and stats
 - **My Library** — download purchased digital assets anytime
 - Profile management (name, email, phone, avatar)
 - **Referral program** — share a link, earn 5% credit on friend purchases
 
 ### Admin & Accounting
+
 - Full **Django Admin** for all models
 - Custom **Accounting Dashboard** — revenue, transactions, monthly charts, top coupons
 
 ### Security
+
 - Session authentication with **httpOnly cookies**
 - CSRF protection with httpOnly CSRF cookies
 - Download access restricted to purchasers (or staff)
@@ -54,14 +59,14 @@ A scalable Django e-commerce platform for **digital products** — e-books, cour
 
 ## Tech Stack
 
-| Layer        | Technology                          |
-| ------------ | ----------------------------------- |
-| Framework    | Django 6.x                          |
-| Database     | SQLite (`db.sqlite3`)               |
-| Templates    | Django Templates                    |
-| Styling      | Custom CSS (DM Sans + Instrument Serif) |
-| Images       | Pillow                              |
-| Python       | 3.10+ recommended                   |
+| Layer     | Technology                              |
+| --------- | --------------------------------------- |
+| Framework | Django 6.x                              |
+| Database  | SQLite (`db.sqlite3`)                   |
+| Templates | Django Templates                        |
+| Styling   | Custom CSS (DM Sans + Instrument Serif) |
+| Images    | Pillow                                  |
+| Python    | 3.10+ recommended                       |
 
 ---
 
@@ -111,22 +116,22 @@ flowchart TB
 
 ### App Responsibilities
 
-| App           | Purpose                                              |
-| ------------- | ---------------------------------------------------- |
-| `accounts`    | User profiles, referral codes, referral rewards      |
-| `catalog`     | Categories, products, digital asset files            |
-| `cart`        | Shopping cart, coupon session, checkout views        |
-| `orders`      | Orders, order items, user library, checkout service  |
-| `promotions`  | Coupon definitions and usage tracking                |
-| `accounting`  | Financial transactions and admin revenue dashboard   |
-| `core`        | Shared mixins and abstract base models               |
+| App          | Purpose                                             |
+| ------------ | --------------------------------------------------- |
+| `accounts`   | User profiles, referral codes, referral rewards     |
+| `catalog`    | Categories, products, digital asset files           |
+| `cart`       | Shopping cart, coupon session, checkout views       |
+| `orders`     | Orders, order items, user library, checkout service |
+| `promotions` | Coupon definitions and usage tracking               |
+| `accounting` | Financial transactions and admin revenue dashboard  |
+| `core`       | Shared mixins and abstract base models              |
 
 ---
 
 ## Project Structure
 
 ```
-django-test/
+E-Shop-Django/
 ├── config/                  # Project settings & root URLs
 │   ├── settings.py
 │   └── urls.py
@@ -155,21 +160,21 @@ django-test/
 
 Each domain has its own tables with explicit `db_table` names for clarity and future migrations.
 
-| Table                    | App          | Description                              |
-| ------------------------ | ------------ | ---------------------------------------- |
-| `accounts_profile`       | accounts     | User profile, referral code, credit      |
-| `accounts_referral_reward` | accounts   | Referral payout records                  |
-| `catalog_category`       | catalog      | Product categories                       |
-| `catalog_product`        | catalog      | Digital products with pricing            |
-| `catalog_digital_asset`  | catalog      | Downloadable files per product           |
-| `cart_cart`              | cart         | Cart (user or session)                   |
-| `cart_cart_item`         | cart         | Line items in cart                       |
-| `orders_order`           | orders       | Completed/pending orders                 |
-| `orders_order_item`      | orders       | Snapshot of items at purchase time       |
-| `orders_user_library`    | orders       | Purchased products & download tracking   |
-| `promotions_coupon`      | promotions   | Coupon rules and limits                  |
-| `promotions_coupon_usage`| promotions   | Per-order coupon redemption              |
-| `accounting_transaction` | accounting   | Sale, refund, referral payout records    |
+| Table                      | App        | Description                            |
+| -------------------------- | ---------- | -------------------------------------- |
+| `accounts_profile`         | accounts   | User profile, referral code, credit    |
+| `accounts_referral_reward` | accounts   | Referral payout records                |
+| `catalog_category`         | catalog    | Product categories                     |
+| `catalog_product`          | catalog    | Digital products with pricing          |
+| `catalog_digital_asset`    | catalog    | Downloadable files per product         |
+| `cart_cart`                | cart       | Cart (user or session)                 |
+| `cart_cart_item`           | cart       | Line items in cart                     |
+| `orders_order`             | orders     | Completed/pending orders               |
+| `orders_order_item`        | orders     | Snapshot of items at purchase time     |
+| `orders_user_library`      | orders     | Purchased products & download tracking |
+| `promotions_coupon`        | promotions | Coupon rules and limits                |
+| `promotions_coupon_usage`  | promotions | Per-order coupon redemption            |
+| `accounting_transaction`   | accounting | Sale, refund, referral payout records  |
 
 ---
 
@@ -183,7 +188,7 @@ Each domain has its own tables with explicit `db_table` names for clarity and fu
 ### 1. Clone & enter the project
 
 ```bash
-cd django-test
+cd E-Shop-Django
 ```
 
 ### 2. Create and activate a virtual environment
@@ -234,18 +239,18 @@ python manage.py createsuperuser
 
 Available after running `seed_data`:
 
-| Role     | Username | Password   | Access                                      |
-| -------- | -------- | ---------- | ------------------------------------------- |
-| Admin    | `admin`  | `admin123` | Django Admin + Accounting Dashboard         |
-| Customer | `demo`   | `demo123`  | Shop, cart, library, referrals              |
+| Role     | Username | Password   | Access                              |
+| -------- | -------- | ---------- | ----------------------------------- |
+| Admin    | `admin`  | `admin123` | Django Admin + Accounting Dashboard |
+| Customer | `demo`   | `demo123`  | Shop, cart, library, referrals      |
 
 ### Sample coupon codes
 
-| Code        | Type       | Value | Notes                    |
-| ----------- | ---------- | ----- | ------------------------ |
-| `WELCOME10` | Percentage | 10%   | Welcome discount         |
-| `SAVE20`    | Fixed      | $20   | Min order $50            |
-| `FLASH50`   | Percentage | 50%   | Limited to 100 uses      |
+| Code        | Type       | Value | Notes               |
+| ----------- | ---------- | ----- | ------------------- |
+| `WELCOME10` | Percentage | 10%   | Welcome discount    |
+| `SAVE20`    | Fixed      | $20   | Min order $50       |
+| `FLASH50`   | Percentage | 50%   | Limited to 100 uses |
 
 ---
 
@@ -253,36 +258,36 @@ Available after running `seed_data`:
 
 ### Public
 
-| URL                        | Description              |
-| -------------------------- | ------------------------ |
-| `/`                        | Homepage                 |
-| `/shop/products/`          | All products             |
-| `/shop/category/<slug>/`   | Products by category     |
-| `/shop/product/<slug>/`    | Product detail           |
-| `/shop/categories/`        | Category listing         |
-| `/cart/`                   | Shopping cart            |
-| `/accounts/login/`         | Sign in                  |
-| `/accounts/register/`      | Create account           |
+| URL                      | Description          |
+| ------------------------ | -------------------- |
+| `/`                      | Homepage             |
+| `/shop/products/`        | All products         |
+| `/shop/category/<slug>/` | Products by category |
+| `/shop/product/<slug>/`  | Product detail       |
+| `/shop/categories/`      | Category listing     |
+| `/cart/`                 | Shopping cart        |
+| `/accounts/login/`       | Sign in              |
+| `/accounts/register/`    | Create account       |
 
 ### Customer (login required)
 
-| URL                        | Description              |
-| -------------------------- | ------------------------ |
-| `/accounts/dashboard/`     | Customer dashboard       |
-| `/accounts/library/`       | Purchased downloads      |
-| `/accounts/referrals/`     | Referral program         |
-| `/accounts/profile/`       | Profile settings         |
-| `/cart/checkout/`          | Checkout                 |
-| `/orders/`                 | Order history            |
-| `/orders/<order_number>/`  | Order detail             |
-| `/orders/download/<id>/`   | Download digital asset   |
+| URL                       | Description            |
+| ------------------------- | ---------------------- |
+| `/accounts/dashboard/`    | Customer dashboard     |
+| `/accounts/library/`      | Purchased downloads    |
+| `/accounts/referrals/`    | Referral program       |
+| `/accounts/profile/`      | Profile settings       |
+| `/cart/checkout/`         | Checkout               |
+| `/orders/`                | Order history          |
+| `/orders/<order_number>/` | Order detail           |
+| `/orders/download/<id>/`  | Download digital asset |
 
 ### Admin (staff required)
 
-| URL                              | Description              |
-| -------------------------------- | ------------------------ |
-| `/admin/`                        | Django Admin panel       |
-| `/admin-panel/accounting/`       | Accounting dashboard     |
+| URL                        | Description          |
+| -------------------------- | -------------------- |
+| `/admin/`                  | Django Admin panel   |
+| `/admin-panel/accounting/` | Accounting dashboard |
 
 ---
 
@@ -371,14 +376,14 @@ Register it in `config/settings.py` → `INSTALLED_APPS`, then add URLs to `conf
 
 ### Suggested future modules
 
-| Feature            | Suggested approach                                      |
-| ------------------ | ------------------------------------------------------- |
-| Real payments      | New `payments` app; hook into `CheckoutService`         |
-| REST API           | Add Django REST Framework; reuse existing services      |
-| Subscriptions      | New `subscriptions` app linked to `orders`              |
-| Email notifications| Django signals on order completion in `orders` app        |
-| Reviews & ratings  | New `reviews` app with FK to `catalog.Product`          |
-| Wishlists          | New `wishlists` app or extend `cart`                    |
+| Feature             | Suggested approach                                 |
+| ------------------- | -------------------------------------------------- |
+| Real payments       | New `payments` app; hook into `CheckoutService`    |
+| REST API            | Add Django REST Framework; reuse existing services |
+| Subscriptions       | New `subscriptions` app linked to `orders`         |
+| Email notifications | Django signals on order completion in `orders` app |
+| Reviews & ratings   | New `reviews` app with FK to `catalog.Product`     |
+| Wishlists           | New `wishlists` app or extend `cart`               |
 
 ### Conventions to follow
 
